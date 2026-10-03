@@ -1,0 +1,173 @@
+/* Clipping the decorative glows' horizontal overflow, not just cosmetic -
+   without this the whole document becomes horizontally scrollable on
+   narrow viewports even though nothing visible is actually clipped.
+   overflow-x:clip specifically (not hidden): per the CSS Overflow spec,
+   pairing a non-"clip" non-visible overflow-x with an unset overflow-y
+   forces overflow-y to compute as "auto" too, silently turning this into
+   its own scroll container - which broke the sidebar's position:sticky
+   (it stuck to this container's scrollport instead of the window's).
+   "clip" is exempt from that pairing rule, so overflow-y stays visible. */
+.dashboard-page { min-height: 100dvh; overflow-x: clip; }
+
+.dashboard-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  background: #050505;
+  color: var(--muted, #9a9a9a);
+  font-size: 14px;
+}
+
+.dashboard-main-content {
+  max-width: 1280px;
+  padding: 0 32px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  transition: max-width 0.2s ease;
+}
+
+/* the content area doesn't auto-center (deliberately left-aligned under
+   the sidebar), so collapsing the sidebar without widening this cap
+   leaves a lopsided empty gutter on the right instead of reclaiming the
+   space - not symmetric with the sidebar-open layout. */
+.dashboard-shell:has(.dashboard-sidebar:not(.is-open)) .dashboard-main-content {
+  max-width: 1560px;
+}
+
+.dashboard-section { scroll-margin-top: 20px; }
+
+.dashboard-grid-2 {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.dashboard-grid-2 > *:nth-child(2) { animation-delay: 0.06s; }
+/* grid items default to a content-based min-width, which lets a wide
+   child (like the 53-week heatmap) push the whole track wider than the
+   viewport instead of scrolling internally via its own overflow-x. */
+.dashboard-grid-2 > * { min-width: 0; }
+
+/* ---------- shared panel chrome (used by every dashboard widget) ---------- */
+
+.dashboard-panel {
+  padding: 20px 22px;
+  border-radius: 14px;
+  border: 1px solid var(--panel-border, rgba(255, 255, 255, 0.09));
+  background: var(--panel-bg, #0a0a0a);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  animation: panel-in 0.4s var(--ease, cubic-bezier(0.16, 1, 0.3, 1)) both;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.dashboard-panel:hover {
+  border-color: var(--panel-border-strong, rgba(255, 255, 255, 0.18));
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--panel-border, rgba(255, 255, 255, 0.07));
+}
+.dashboard-panel-head-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.dashboard-panel-head h2 {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #f2f2f2;
+}
+
+.panel-head-sub {
+  font-size: 11.5px;
+  color: var(--muted, #9a9a9a);
+  font-family: var(--mono-code, ui-monospace, monospace);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 55%;
+}
+
+.panel-head-action {
+  flex-shrink: 0;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--muted, #9a9a9a);
+  font-size: 12px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.panel-head-action:hover { color: var(--accent, #56d364); }
+
+.dashboard-panel-loading,
+.dashboard-panel-empty {
+  margin: 0;
+  padding: 8px 0;
+  font-size: 12.5px;
+  color: var(--muted, #9a9a9a);
+}
+
+/* ---------- onboarding (zero-codebase empty state) ---------- */
+
+.dashboard-onboarding-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 16px;
+  align-items: center;
+  margin-top: 48px;
+}
+
+.dashboard-onboarding {
+  position: relative;
+  max-width: 420px;
+}
+.dashboard-onboarding::before {
+  content: "";
+  position: absolute;
+  top: -60px;
+  left: -60px;
+  width: 340px;
+  height: 260px;
+  background: radial-gradient(ellipse 60% 60% at 30% 30%, rgba(86, 211, 100, 0.09), transparent 72%);
+  pointer-events: none;
+  z-index: -1;
+}
+.dashboard-onboarding h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+.dashboard-onboarding p {
+  margin: 0 0 20px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--muted, #9a9a9a);
+}
+
+@media (max-width: 900px) {
+  .dashboard-main-content { padding: 0 20px 48px; }
+}
+
+@media (max-width: 860px) {
+  .dashboard-grid-2 { grid-template-columns: 1fr; }
+  .dashboard-onboarding-grid { grid-template-columns: 1fr; }
+}

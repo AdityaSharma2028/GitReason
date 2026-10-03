@@ -1,0 +1,85 @@
+.dashboard-main-header {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 28px 32px 20px;
+}
+.dashboard-main-header::before {
+  content: "";
+  position: absolute;
+  top: -30px;
+  left: 0;
+  width: 480px;
+  height: 220px;
+  background: radial-gradient(ellipse 60% 60% at 15% 20%, rgba(86, 211, 100, 0.07), transparent 72%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.dashboard-greeting h1 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+.dashboard-greeting p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted, #9a9a9a);
+}
+
+/* the same hand-drawn accent treatment as the landing hero's "Codebase" -
+   .headline-accent/.headline-underline are shared/global (App.css), this
+   just supplies the em's own color+font in this smaller header context. */
+.dashboard-greeting h1 em {
+  font-family: "Kalam", cursive, sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.05em;
+  color: var(--accent, #56d364);
+}
+
+.dashboard-header-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Desktop's own collapse toggle lives inside the sidebar now
+   (.sidebar-collapse-btn) - this one is the mobile-only trigger for the
+   overlay drawer, which has no reachable control of its own when closed. */
+.sidebar-toggle {
+  display: none;
+  flex-shrink: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--panel-border-strong, rgba(255, 255, 255, 0.14));
+  border-radius: 6px;
+  background: var(--panel-bg, #0a0a0a);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.sidebar-toggle:hover { border-color: var(--accent, #56d364); }
+.sidebar-toggle span {
+  display: block;
+  height: 1px;
+  margin: 0 7px;
+  background: #ddd;
+}
+
+@media (max-width: 900px) {
+  .sidebar-toggle { display: flex; }
+  .dashboard-main-header { padding: 18px 20px 16px; flex-wrap: wrap; }
+}
+
+@media (max-width: 560px) {
+  .dashboard-main-header { align-items: center; }
+  .dashboard-greeting p { display: none; }
+}
